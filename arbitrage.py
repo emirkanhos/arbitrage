@@ -33,7 +33,10 @@ def get_okx_price(symbol):
     """
     try:
         url = f"https://www.okx.com/api/v5/market/books?instId={symbol}&sz=5"
-        response = requests.get(url)
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36'
+        }
+        response = requests.get(url, headers=headers)
         response.raise_for_status()
         order_book = response.json()['data'][0]
         best_bid_price = float(order_book['bids'][0][0])  # En iyi alış fiyatı
@@ -71,7 +74,7 @@ def calculate_profit_from_binance_to_okx(binance_fdusd_try_bid, binance_fdusd_us
         if binance_fdusd_try_bid and binance_fdusd_usdt_bid and okx_usdt_try:
             fdusd_from_try = user_try_amount // binance_fdusd_try_bid
             usdt_from_fdusd = fdusd_from_try * binance_fdusd_usdt_bid
-            try_from_usdt = usdt_from_fdusd * okx_usdt_try
+            try_from_usdt = usdt_from_usdt * okx_usdt_try
 
             profit_from_user_try = try_from_usdt - user_try_amount
             profit_ratio = (profit_from_user_try / user_try_amount) * 100
