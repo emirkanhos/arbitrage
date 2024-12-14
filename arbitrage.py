@@ -57,11 +57,11 @@ async def calculate_prices(user_try_amount):
     except Exception as e:
         st.error(f"Fiyat hesaplama hatası: {e}")
 
-async def main():
+def main():
     user_try_amount = st.number_input("İşlem yapmak istediğiniz TRY miktarını girin:", min_value=1, step=1)
     if st.button("Fiyatları Getir"):
         st.write("Fiyatlar çekiliyor...")
-        await calculate_prices(user_try_amount)
+        asyncio.run(calculate_prices(user_try_amount))
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
