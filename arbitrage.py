@@ -1,26 +1,22 @@
 import requests
+import time
 
 
 def get_binance_price(symbol):
     """
     Bu fonksiyon Binance'den belirtilen paritenin limit emirle alınacak alış veya satış fiyatını alır.
-
-    Args:
-        symbol (str): Binance sembolü (Örnek: 'FDUSDTRY', 'FDUSDUSDT')
-
-    Returns:
-        tuple: (alış fiyatı, satış fiyatı) olarak döner.
     """
     try:
         url = f"https://api.binance.com/api/v3/depth?symbol={symbol}&limit=5"
         headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36'
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36'
         }
         response = requests.get(url, headers=headers)
         response.raise_for_status()
         order_book = response.json()
         best_bid_price = float(order_book['bids'][0][0])  # En iyi alış fiyatı
         best_ask_price = float(order_book['asks'][0][0])  # En iyi satış fiyatı
+        time.sleep(2)  # İstekler arasında 2 saniye bekleyin
         return best_bid_price, best_ask_price
     except Exception as e:
         print(f"Binance fiyat çekme hatası ({symbol}): {e}")
@@ -34,12 +30,13 @@ def get_okx_price(symbol):
     try:
         url = f"https://www.okx.com/api/v5/market/books?instId={symbol}&sz=5"
         headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36'
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36'
         }
         response = requests.get(url, headers=headers)
         response.raise_for_status()
         order_book = response.json()['data'][0]
         best_bid_price = float(order_book['bids'][0][0])  # En iyi alış fiyatı
+        time.sleep(2)  # İstekler arasında 2 saniye bekleyin
         return best_bid_price
     except Exception as e:
         print(f"OKX fiyat çekme hatası ({symbol}): {e}")
@@ -74,7 +71,7 @@ def calculate_profit_from_binance_to_okx(binance_fdusd_try_bid, binance_fdusd_us
         if binance_fdusd_try_bid and binance_fdusd_usdt_bid and okx_usdt_try:
             fdusd_from_try = user_try_amount // binance_fdusd_try_bid
             usdt_from_fdusd = fdusd_from_try * binance_fdusd_usdt_bid
-            try_from_usdt = usdt_from_usdt * okx_usdt_try
+            try_from_usdt = usdt_from_fdusd * okx_usdt_try
 
             profit_from_user_try = try_from_usdt - user_try_amount
             profit_ratio = (profit_from_user_try / user_try_amount) * 100
