@@ -9,8 +9,11 @@ async def get_binance_price(symbol):
     """
     try:
         url = f"https://api.binance.com/api/v3/depth?symbol={symbol}&limit=5"
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36'
+        }
         async with httpx.AsyncClient() as client:
-            response = await client.get(url)
+            response = await client.get(url, headers=headers)
         response.raise_for_status()
         order_book = response.json()
         best_bid_price = float(order_book['bids'][0][0])  # En iyi alış fiyatı
@@ -27,8 +30,11 @@ async def get_okx_price(symbol):
     """
     try:
         url = f"https://www.okx.com/api/v5/market/books?instId={symbol}&sz=5"
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36'
+        }
         async with httpx.AsyncClient() as client:
-            response = await client.get(url)
+            response = await client.get(url, headers=headers)
         response.raise_for_status()
         order_book = response.json()['data'][0]
         best_bid_price = float(order_book['bids'][0][0])  # En iyi alış fiyatı
