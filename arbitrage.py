@@ -1,22 +1,24 @@
-import requests
-import time
+import httpx
+import asyncio
 
 
 def get_binance_price(symbol):
     """
     Bu fonksiyon Binance'den belirtilen paritenin limit emirle alınacak alış veya satış fiyatını alır.
+
+    Args:
+        symbol (str): Binance sembolü (Örnek: 'FDUSDTRY', 'FDUSDUSDT')
+
+    Returns:
+        tuple: (alış fiyatı, satış fiyatı) olarak döner.
     """
     try:
         url = f"https://api.binance.com/api/v3/depth?symbol={symbol}&limit=5"
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36'
-        }
-        response = requests.get(url, headers=headers)
+        response = httpx.get(url)
         response.raise_for_status()
         order_book = response.json()
         best_bid_price = float(order_book['bids'][0][0])  # En iyi alış fiyatı
         best_ask_price = float(order_book['asks'][0][0])  # En iyi satış fiyatı
-        time.sleep(2)  # İstekler arasında 2 saniye bekleyin
         return best_bid_price, best_ask_price
     except Exception as e:
         print(f"Binance fiyat çekme hatası ({symbol}): {e}")
@@ -29,14 +31,10 @@ def get_okx_price(symbol):
     """
     try:
         url = f"https://www.okx.com/api/v5/market/books?instId={symbol}&sz=5"
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36'
-        }
-        response = requests.get(url, headers=headers)
+        response = httpx.get(url)
         response.raise_for_status()
         order_book = response.json()['data'][0]
         best_bid_price = float(order_book['bids'][0][0])  # En iyi alış fiyatı
-        time.sleep(2)  # İstekler arasında 2 saniye bekleyin
         return best_bid_price
     except Exception as e:
         print(f"OKX fiyat çekme hatası ({symbol}): {e}")
@@ -119,4 +117,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
