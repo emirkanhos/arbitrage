@@ -2,7 +2,7 @@ import httpx
 import asyncio
 import streamlit as st
 
-@st.cache_data(ttl=60)  # Önbellek süresi 60 saniye
+@st.cache_resource  # Önbellek süresi 60 saniye
 async def get_binance_price(symbol):
     """
     Binance'den belirtilen paritenin limit emirle alınacak alış veya satış fiyatını alır.
@@ -20,7 +20,7 @@ async def get_binance_price(symbol):
         st.error(f"Binance fiyat çekme hatası ({symbol}): {e}")
         return None, None
 
-@st.cache_data(ttl=60)  # Önbellek süresi 60 saniye
+@st.cache_resource  # Önbellek süresi 60 saniye
 async def get_okx_price(symbol):
     """
     OKX'ten belirtilen paritenin limit emirle alınacak alış fiyatını alır.
