@@ -15,7 +15,7 @@ async def get_binance_price(symbol):
         order_book = response.json()
         best_bid_price = float(order_book['bids'][0][0])  # En iyi alış fiyatı
         best_ask_price = float(order_book['asks'][0][0])  # En iyi satış fiyatı
-        return best_bid_price, best_ask_price
+        return (best_bid_price, best_ask_price)  # Tuple döndürerek pickle uyumlu yapıyoruz
     except Exception as e:
         st.error(f"Binance fiyat çekme hatası ({symbol}): {e}")
         return None, None
@@ -32,7 +32,7 @@ async def get_okx_price(symbol):
         response.raise_for_status()
         order_book = response.json()['data'][0]
         best_bid_price = float(order_book['bids'][0][0])  # En iyi alış fiyatı
-        return best_bid_price
+        return best_bid_price  # Basit bir float döndürerek pickle uyumlu yapıyoruz
     except Exception as e:
         st.error(f"OKX fiyat çekme hatası ({symbol}): {e}")
         return None
